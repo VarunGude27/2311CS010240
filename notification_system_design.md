@@ -203,3 +203,83 @@ GET /notifications/unread
 ## Real-Time Notification Delivery
 
 To provide instant notification updates without requiring the user to refresh the application, the system uses **WebSocket (Socket.IO)**. Whenever a new notification is created, the server pushes it directly to all connected users. This approach improves responsiveness and provides a better user experience compared to periodic polling.
+
+# Stage 2 – Database Design
+
+## Database
+
+**PostgreSQL** is used because it provides:
+
+- ACID transactions
+- Fast query performance
+- Good indexing support
+- High scalability
+
+---
+
+## Database Schema
+
+### Students
+
+| Column | Type |
+|---------|------|
+| studentId | UUID |
+| fullName | VARCHAR(100) |
+| email | VARCHAR(100) |
+| department | VARCHAR(50) |
+
+### Notifications
+
+| Column | Type |
+|---------|------|
+| notificationId | UUID |
+| studentId | UUID |
+| title | VARCHAR(150) |
+| message | TEXT |
+| category | VARCHAR(30) |
+| isRead | BOOLEAN |
+| createdAt | TIMESTAMP |
+
+---
+
+## Relationship
+
+One student can have multiple notifications.
+
+```
+Student (1) ------ (Many) Notifications
+```
+
+---
+
+## Indexes
+
+```sql
+CREATE INDEX idx_student_notifications
+ON Notifications(studentId);
+
+CREATE INDEX idx_read_status
+ON Notifications(studentId, isRead);
+```
+
+These indexes improve notification retrieval and unread notification queries.
+
+---
+
+## Scalability
+
+To support a large number of users:
+
+- Pagination
+- Database indexing
+- Connection pooling
+- Read replicas
+
+---
+
+## Benefits
+
+- Fast notification retrieval
+- Better query performance
+- Scalable database design
+- Reliable data consistency
