@@ -283,3 +283,44 @@ To support a large number of users:
 - Better query performance
 - Scalable database design
 - Reliable data consistency
+
+# Stage 3 – SQL Query Optimization
+
+## Problem
+
+The following query retrieves unread notifications for a student:
+
+```sql
+SELECT *
+FROM Notifications
+WHERE studentId = 1042
+AND isRead = FALSE
+ORDER BY createdAt DESC;
+```
+
+As the number of notifications grows, this query becomes slower because the database must scan many records and sort the results.
+
+---
+
+## Solution
+
+Create a composite index to improve filtering and sorting.
+
+```sql
+CREATE INDEX idx_student_read_created
+ON Notifications(studentId, isRead, createdAt DESC);
+```
+
+---
+
+## Optimized Query
+
+```sql
+SELECT *
+FROM Notifications
+WHERE studentId = 1042
+AND isRead = FALSE
+ORDER BY createdAt DESC;
+```
+
+---
